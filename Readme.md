@@ -21,7 +21,7 @@ Depois que a conta no Docker Hub for criada e confirmada, acessar o nosso labora
 
 `docker stop ou docker rm -f`
 
-# Let's **containerize** something!
+# Let's containerize something!
 
 Vamos precisar de um editor de texto no nosso host, então: 
 
@@ -204,8 +204,8 @@ Vamos adicionar uma nova biblioteca:
 flask
 redis
 ```
-# docker-compose
-O docker compose é um programa que define e roda ambientes multi-container, como o nosso. Usa-se um arquivo YAML para descrever o ambiente e, depois disso, é possível subir todos os containers apenas com o comando `docker-compose up`. Em **image:** você poderá mudar o **grstein** que é a referência ao meu repositório no docker hub para o seu username e utilizar a sua imagem.
+# Docker compose
+O docker-compose é um programa que define e roda ambientes multi-container, como o nosso. Ele usa um arquivo YAML para descrever o ambiente e, depois disso, é possível subir todos os containers apenas com o comando `docker-compose up`. Em **image:** você deve alterar o **grstein** que é a referência ao meu repositório no docker hub para o seu username e utilizar a imagem que você criou.
 
 Vamos criar o arquivo **docker-compose** que definirá nosso ambiente:
 
