@@ -51,7 +51,7 @@ def hello_world():
 
 # Variáveis de ambiente 
 
-Vamos modificar a nossa aplicação para quep possamos passar uma informação via variáveis de ambiente.
+Vamos modificar a nossa aplicação para que possamos passar uma informação via variáveis de ambiente.
 
 */root/src/app.py*
 ```python
@@ -67,6 +67,7 @@ def hello_world():
 ```
 
 Vamos criar o arquivo que informa quais bibliotecas do python nossa aplicação precisa.
+
 */root/src/requirements.txt*
 ```
 flask
@@ -75,7 +76,7 @@ flask
 # Dockerfile
 Com o Dockerfile é possível definir todos os passos necessários para que nossa aplicação funcione.
 
-*Dockerfile*
+*/root/Dockerfile*
 ```Dockerfile
 FROM alpine
 
@@ -114,11 +115,11 @@ ENTRYPOINT ["flask", "run", "--host=0.0.0.0"]
 `docker run -d -p 5001:5000 -e APP_NAME=Flask02 grstein/app:0.1`
 
 # Balanceador de carga 
-O NGINX é um proxy reverso que vai nos ajudar a distribuir a carga entre as duas instâncias da nossa aplicação, mas a instância **flask01** vai receber o dobro de requisições por conta da configuração **weight**.
+O NGINX é um proxy reverso que vai nos ajudar a distribuir a carga entre as duas instâncias da nossa aplicação, mas a instância **flask01** vai receber o dobro de requisições por conta da configuração **weight**. Não esqueça de trocar o **x.x.x.x** pelo IP do seu host no laboratório.
 
 `docker push nginx`
 
-*nginx.conf*
+*/root/nginx.conf*
 ```conf
 upstream loadbalancer {
 server x.x.x.x:5000 weight=2;
@@ -133,7 +134,7 @@ proxy_pass http://loadbalancer;
 `docker run -v ./nginx.conf:/etc/nginx/conf.d/default.conf -p 80:80 nginx`
 
 # Volumes
-Existem duas formas de montar arquivos dentro do container.
+Existem duas formas de montar arquivos dentro do container: **Named Volume** e **Bind Mount**.
 
 ## Named Volume
 Cria uma unidade virtual para ser montada dentro do container. Ex:
@@ -150,13 +151,17 @@ Cria uma unidade virtual para ser montada dentro do container. Ex:
 Monta um diretório do host dentro do container. Ex:
 
 `docker run -p 5000:5000 -e APP_NAME=Flask-01 -v /root/src:/app_dev -w /app_dev grstein/app:0.1`
+
 ou 
+
 `docker run -p 5000:5000 -e APP_NAME=Flask-01 -v ./src:/app_dev -w /app_dev grstein/app:0.1`
+
 Repare que logo após o **-v** indicamos um diretório do host.
 
 # Persistência de dados
 Como exemplo dos volumes, vamos utilizar o [REDIS|https://redis.io/] para gravar dados e responder a consultas pelas instâncias da nossa aplicação.
 Primeiro vamos alterar nossa aplicação:
+
 */root/src/app.py*
 ```python
 from flask import Flask
@@ -193,6 +198,7 @@ def get(key):
 ```
 
 Vamos adicionar uma nova biblioteca:
+
 */root/src/requirements.txt*
 ```
 flask
@@ -202,7 +208,8 @@ redis
 O docker compose é um programa que define e roda ambientes multi-container, como o nosso. Usa-se um arquivo YAML para descrever o ambiente e, depois disso, é possível subir todos os containers apenas com o comando `docker-compose up`. Em **image:** você poderá mudar o **grstein** que é a referência ao meu repositório no docker hub para o seu username e utilizar a sua imagem.
 
 Vamos criar o arquivo **docker-compose** que definirá nosso ambiente:
-*docker-compose*
+
+*/root/docker-compose*
 ```Dockerfile
 version: '3.8'
 
@@ -236,7 +243,7 @@ services:
 
 Precisaremos alterar as configurações do nginx. Atenção que agora as duas portas serão 5000 pois o docker-compose criará cada instância com o **hostname** igual ao **service** configurado no arquivo YAML:
 
-*nginx.conf*
+*/root/nginx.conf*
 ```conf
 upstream loadbalancer {
 server flask01:5000 weight=2;
