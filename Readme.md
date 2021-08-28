@@ -133,33 +133,8 @@ proxy_pass http://loadbalancer;
 
 `docker run -v ./nginx.conf:/etc/nginx/conf.d/default.conf -p 80:80 nginx`
 
-# Volumes
-Existem duas formas de montar arquivos dentro do container: **Named Volume** e **Bind Mount**.
-
-## Named Volume
-Cria uma unidade virtual para ser montada dentro do container. Ex:
-
-`docker volume create dados` Cria uma unidade virtual chamada dados.
-
-`docker volume inspect dados` Exibe informações sobre a unidade virtual dados.
-
-`docker run -p 5000:5000 -e APP_NAME=Flask-01 -v dados:/dados grstein/app:0.1` Repare que após o **-v** vem o nome da unidade virtual que criamos.
-
-`docker volume rm dados` Remove a unidade virtual dados.
-
-## Bind Mount
-Monta um diretório do host dentro do container. Ex:
-
-`docker run -p 5000:5000 -e APP_NAME=Flask-01 -v /root/src:/app_dev -w /app_dev grstein/app:0.1`
-
-ou 
-
-`docker run -p 5000:5000 -e APP_NAME=Flask-01 -v ./src:/app_dev -w /app_dev grstein/app:0.1`
-
-Repare que logo após o **-v** indicamos um diretório do host.
-
-# Persistência de dados
-Como exemplo dos volumes, vamos utilizar o [REDIS|https://redis.io/] para gravar dados e responder a consultas pelas instâncias da nossa aplicação.
+# Banco de dados
+Vamos utilizar o [REDIS](https://redis.io/) para gravar dados e responder consultas realizadas pelas instâncias da nossa aplicação.
 Primeiro vamos alterar nossa aplicação:
 
 */root/src/app.py*
@@ -256,6 +231,29 @@ proxy_pass http://loadbalancer;
 ```
 
 `docker-compose up`
+
+# Volumes
+Existem duas formas de montar arquivos dentro do container: **Named Volume** e **Bind Mount**.
+
+## Named Volume
+Cria uma unidade virtual para ser montada dentro do container. Ex:
+
+`docker volume create dados` Cria uma unidade virtual chamada dados.
+
+`docker volume inspect dados` Exibe informações sobre a unidade virtual dados.
+
+`docker run -p 5000:5000 -e APP_NAME=Flask-01 -v dados:/dados grstein/app:0.1` Repare que após o **-v** vem o nome da unidade virtual que criamos.
+
+## Bind Mount
+Monta um diretório do host dentro do container. Ex:
+
+`docker run -p 5000:5000 -e APP_NAME=Flask-01 -v /root/src:/app_dev -w /app_dev grstein/app:0.1`
+
+ou 
+
+`docker run -p 5000:5000 -e APP_NAME=Flask-01 -v ./src:/app_dev -w /app_dev grstein/app:0.1`
+
+Repare que logo após o **-v** indicamos um diretório do host.
 
 # Multi-stage builds
 
