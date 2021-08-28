@@ -224,7 +224,7 @@ services:
   flask02:
     image: grstein/app:0.1
     environment:
-        - APP_NAME=Flask02
+      - APP_NAME=Flask02
     expose:
       - 5000
 
