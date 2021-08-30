@@ -96,23 +96,11 @@ EXPOSE 5000
 
 ENTRYPOINT ["flask", "run", "--host=0.0.0.0"]
 ```
-`docker build -t app:0.1 .`
+`docker build -t app:0.2 .`
 
-`docker run -d -p 5000:5000 -e APP_NAME=Flask01 app:0.1`
-
-# Publicando uma imagem
-
-`docker login`
-
-`docker image history`
-
-`docker tag app:0.1 grstein/app:0.1`
-
-`docker push`
-
-`docker rm -f grstein/app:0.1`
-
-`docker run -d -p 5001:5000 -e APP_NAME=Flask02 grstein/app:0.1`
+`docker run -d -p 5000:5000 -e APP_NAME=Flask01 app:0.2`
+`docker run -d -p 5001:5000 -e APP_NAME=Flask02 app:0.2`
+`docker run -d -p 5002:5000 -e APP_NAME=Flask03 app:0.2`
 
 # Balanceador de carga 
 O NGINX é um proxy reverso que vai nos ajudar a distribuir a carga entre as duas instâncias da nossa aplicação, mas a instância **flask01** vai receber o dobro de requisições por conta da configuração **weight**. Não esqueça de trocar o **x.x.x.x** pelo IP do seu host no laboratório.
@@ -124,6 +112,7 @@ O NGINX é um proxy reverso que vai nos ajudar a distribuir a carga entre as dua
 upstream loadbalancer {
 server x.x.x.x:5000 weight=2;
 server x.x.x.x:5001 weight=1;
+server x.x.x.x:5002 weight=1;
 }
 server {
 location / {
@@ -172,13 +161,16 @@ def get(key):
 		return f"{appname}: {key} não existe"
 ```
 
-Vamos adicionar uma nova biblioteca:
+Vamos adicionar uma nova biblioteca python:
 
 */root/src/requirements.txt*
 ```
 flask
 redis
 ```
+
+Vamos compilar a nova versão da imagem com os comandos `cd ..` para voltar um diretório e `docker build -t app:0.3 .`
+
 # Docker compose
 O docker-compose é um programa que define e roda ambientes multi-container, como o nosso. Ele usa um arquivo YAML para descrever o ambiente e, depois disso, é possível subir todos os containers apenas com o comando `docker-compose up`. Em **image:** você deve alterar o **grstein** que é a referência ao meu repositório no docker hub para o seu username e utilizar a imagem que você criou.
 
@@ -190,16 +182,23 @@ version: '3.8'
 
 services:
   flask01:
-    image: grstein/app:0.1
+    image: app:0.3
     environment:
       - APP_NAME=Flask01
     expose:
       - 5000
 
   flask02:
-    image: grstein/app:0.1
+    image: app:0.3
     environment:
       - APP_NAME=Flask02
+    expose:
+      - 5000
+
+  flask03:
+    image: app:0.3
+    environment:
+      - APP_NAME=Flask03
     expose:
       - 5000
 
@@ -223,6 +222,7 @@ Precisaremos alterar as configurações do nginx. Atenção que agora as duas po
 upstream loadbalancer {
 server flask01:5000 weight=2;
 server flask02:5000 weight=1;
+server flask03:5000 weight=1;
 }
 server {
 location / {
@@ -231,6 +231,20 @@ proxy_pass http://loadbalancer;
 ```
 
 `docker-compose up`
+
+# Publicando uma imagem
+
+`docker login`
+
+`docker image history`
+
+`docker tag app:0.1 grstein/app:0.1`
+
+`docker push`
+
+`docker rm -f grstein/app:0.1`
+
+`docker run -d -p 5001:5000 -e APP_NAME=Flask02 grstein/app:0.1`
 
 # Volumes
 Existem duas formas de montar arquivos dentro do container: **Named Volume** e **Bind Mount**.
