@@ -25,11 +25,11 @@ Depois que a conta no Docker Hub for criada e confirmada, acessar o nosso labora
 
 Vamos precisar de um editor de texto no nosso host, então: 
 
-`apk add nano` ou `apk add vim`.
+`apk add nano`
 
 Vamos criar um diretório para nossa aplicação:
 
-`mkdir src && cd src && vim app.py`
+`mkdir src && cd src && nano app.py`
 
 */root/src/app.py*
 ```python
