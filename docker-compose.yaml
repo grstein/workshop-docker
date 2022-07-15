@@ -1,5 +1,12 @@
 version: '3.8'
 
+networks:
+  default:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.18.0.0/24
+
 services:
   flask01:
     image: app:0.3
